@@ -30,7 +30,7 @@ public class SheepCreature implements ArenaCreature {
     public LivingEntity spawn(Arena arena, World world, Location location) {
         Sheep sheep = (Sheep) world.spawnEntity(location, EntityType.SHEEP);
         sheep.setColor(color);
-        arena.getMonsterManager().addExplodingSheep(sheep);
+        if (explosive) arena.getMonsterManager().addExplodingSheep(sheep);
         return sheep;
     }
 }
