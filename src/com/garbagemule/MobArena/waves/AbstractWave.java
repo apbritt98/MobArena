@@ -3,6 +3,7 @@ package com.garbagemule.MobArena.waves;
 import java.util.List;
 import java.util.Map;
 
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 import org.bukkit.Location;
 
 import com.garbagemule.MobArena.framework.Arena;
@@ -22,7 +23,7 @@ public abstract class AbstractWave implements Wave
     private List<Location> spawnpoints;
     
     @Override
-    public abstract Map<MACreature, Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena);
+    public abstract Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena);
 
     @Override
     public List<Location> getSpawnpoints(Arena arena) {

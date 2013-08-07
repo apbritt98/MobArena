@@ -1,27 +1,9 @@
 package com.garbagemule.MobArena.waves;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.garbagemule.MobArena.waves.mob.*;
 import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.ItemStack;
-
-import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.framework.Arena;
 
 public enum MACreature
 {
@@ -86,8 +68,7 @@ public enum MACreature
     BABYZOMBIE(EntityType.ZOMBIE),        BABYZOMBIES(EntityType.ZOMBIE),
     BABYPIGMAN(EntityType.PIG_ZOMBIE),    BABYPIGMEN(EntityType.PIG_ZOMBIE),
     ZOMBIEVILLAGER(EntityType.ZOMBIE),    ZOMBIEVILLAGERS(EntityType.ZOMBIE);
-    
-    private List<DyeColor> colors = Arrays.asList(DyeColor.values());
+
     private EntityType type;
     
     private MACreature(EntityType type) {
@@ -97,90 +78,71 @@ public enum MACreature
     public EntityType getType() {
         return type;
     }
-    
-    public static MACreature fromString(String string) {
-        return WaveUtils.getEnumFromString(MACreature.class, string.replaceAll("[-_\\.]", ""));
-    }
-    
-    public LivingEntity spawn(Arena arena, World world, Location loc) {
-        LivingEntity e = (LivingEntity) world.spawnEntity(loc, type);
-        
-        switch (this) {
+
+    public static ArenaCreature creatureFromString(String string) {
+        MACreature mac = WaveUtils.getEnumFromString(MACreature.class, string.replaceAll("[-_\\.]", ""));
+        if (mac == null) {
+            EntityType type = EntityType.fromName(string);
+            if (type == null && string.matches("[1-9][0-9]*")) {
+                type = EntityType.fromId(Integer.parseInt(string));
+            }
+            return type != null ? new BasicCreature(type) : null;
+        }
+
+        switch (mac) {
             case SHEEP:
-                ((Sheep) e).setColor(colors.get(MobArena.random.nextInt(colors.size())));
-                break;
+                return new SheepCreature();
             case EXPLODINGSHEEP:
-                arena.getMonsterManager().addExplodingSheep(e);
-                ((Sheep) e).setColor(DyeColor.RED);
-                break;
-            case POWEREDCREEPERS:
-                ((Creeper) e).setPowered(true);
-                break;
+                return new SheepCreature(DyeColor.RED, true);
+            case ANGRYWOLF:
             case ANGRYWOLVES:
-                ((Wolf) e).setAngry(true);
-                break;
-            case SLIME:
-            case SLIMES:
-            case MAGMACUBE:
-            case MAGMACUBES:
-                ((Slime) e).setSize( (1 + MobArena.random.nextInt(3)) );
-                break;
-            case SLIMETINY:
-            case SLIMESTINY:
-            case MAGMACUBETINY:
-            case MAGMACUBESTINY:
-                ((Slime) e).setSize(1);
-                break;
-            case SLIMESMALL:
-            case SLIMESSMALL:
-            case MAGMACUBESMALL:
-            case MAGMACUBESSMALL:
-                ((Slime) e).setSize(2);
-                break;
-            case SLIMEBIG:
-            case SLIMESBIG:
-            case MAGMACUBEBIG:
-            case MAGMACUBESBIG:
-                ((Slime) e).setSize(3);
-                break;
-            case SLIMEHUGE:
-            case SLIMESHUGE:
-            case MAGMACUBEHUGE:
-            case MAGMACUBESHUGE:
-                ((Slime) e).setSize(4);
-                break;
+                return new AngryWolfCreature();
             case SKELETON:
             case SKELETONS:
-                ((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.BOW, 1));
-            	break;
-            case ZOMBIEPIGMAN:
-            case ZOMBIEPIGMEN:
-            	((PigZombie) e).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD, 1));
-            	break;
-            case ZOMBIEVILLAGER:
-            case ZOMBIEVILLAGERS:
-                ((Zombie) e).setVillager(true);
-                break;
+                return new SkeletonCreature();
+            case WITHERSKELETON:
+            case WITHERSKELETONS:
+                return new SkeletonCreature(SkeletonType.WITHER);
             case BABYZOMBIE:
             case BABYZOMBIES:
             case BABYPIGMAN:
             case BABYPIGMEN:
-                ((Zombie) e).setBaby(true);
-                break;
-            case WITHERSKELETON:
-            case WITHERSKELETONS:
-                ((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.STONE_SWORD, 1));
-                ((Skeleton) e).setSkeletonType(SkeletonType.WITHER);
-                break;
-            default:
-                break;
+                return new BabyZombieCreature(mac.getType());
+            case ZOMBIEPIGMAN:
+            case ZOMBIEPIGMEN:
+                return new PigZombieCreature();
+            case ZOMBIEVILLAGER:
+            case ZOMBIEVILLAGERS:
+                return new ZombieVillagerCreature();
+            case POWEREDCREEPER:
+            case POWEREDCREEPERS:
+                return new PoweredCreeperCreature();
+            case SLIME:
+            case SLIMES:
+            case MAGMACUBE:
+            case MAGMACUBES:
+                return new SlimeCreature(mac.getType());
+            case SLIMETINY:
+            case SLIMESTINY:
+            case MAGMACUBETINY:
+            case MAGMACUBESTINY:
+                return new SlimeCreature(mac.getType(), 1);
+            case SLIMESMALL:
+            case SLIMESSMALL:
+            case MAGMACUBESMALL:
+            case MAGMACUBESSMALL:
+                return new SlimeCreature(mac.getType(), 2);
+            case SLIMEBIG:
+            case SLIMESBIG:
+            case MAGMACUBEBIG:
+            case MAGMACUBESBIG:
+                return new SlimeCreature(mac.getType(), 3);
+            case SLIMEHUGE:
+            case SLIMESHUGE:
+            case MAGMACUBEHUGE:
+            case MAGMACUBESHUGE:
+                return new SlimeCreature(mac.getType(), 4);
+            default: return new BasicCreature(mac.getType());
         }
-        
-        if (e instanceof Creature) {
-            Creature c = (Creature) e;
-            c.setTarget(WaveUtils.getClosestPlayer(arena, e));
-        }
-        
-        return e;
     }
 }

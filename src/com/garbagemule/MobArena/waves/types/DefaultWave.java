@@ -6,21 +6,22 @@ import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.waves.AbstractWave;
 import com.garbagemule.MobArena.waves.MACreature;
 import com.garbagemule.MobArena.waves.enums.*;
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 
 public class DefaultWave extends AbstractWave
 {
-    private SortedMap<Integer,MACreature> monsterMap;
+    private SortedMap<Integer,ArenaCreature> monsterMap;
     private WaveGrowth growth;
     private boolean fixed;
     
-    public DefaultWave(SortedMap<Integer,MACreature> monsterMap) {
+    public DefaultWave(SortedMap<Integer,ArenaCreature> monsterMap) {
         this.monsterMap = monsterMap;
         this.growth = WaveGrowth.OLD;
         this.setType(WaveType.DEFAULT);
     }
     
     @Override
-    public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
+    public Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
         if (fixed) return getFixed();
 
         // Get the amount of monsters to spawn.
@@ -33,13 +34,13 @@ public class DefaultWave extends AbstractWave
         Random random = new Random();
         
         // Prepare the monster map.
-        Map<MACreature,Integer> monsters = new HashMap<MACreature,Integer>();
-        
+        Map<ArenaCreature,Integer> monsters = new HashMap<ArenaCreature,Integer>();
+
         // Generate some random amounts.
         for (int i = 0; i < toSpawn; i++) {
             int value = random.nextInt(total) + 1;
             
-            for (Map.Entry<Integer,MACreature> entry : monsterMap.entrySet()) {
+            for (Map.Entry<Integer,ArenaCreature> entry : monsterMap.entrySet()) {
                 if (value > entry.getKey()) {
                     continue;
                 }
@@ -54,12 +55,12 @@ public class DefaultWave extends AbstractWave
         return monsters;
     }
 
-    private Map<MACreature,Integer> getFixed() {
-        Map<MACreature,Integer> result = new HashMap<MACreature,Integer>();
+    private Map<ArenaCreature,Integer> getFixed() {
+        Map<ArenaCreature,Integer> result = new HashMap<ArenaCreature,Integer>();
 
         // For fixed waves, we just convert the accumulated map
         int last = 0;
-        for (Map.Entry<Integer,MACreature> entry : monsterMap.entrySet()) {
+        for (Map.Entry<Integer,ArenaCreature> entry : monsterMap.entrySet()) {
             int prob = entry.getKey();
             result.put(entry.getValue(), prob - last);
             last = prob;

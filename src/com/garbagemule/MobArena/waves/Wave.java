@@ -3,6 +3,7 @@ package com.garbagemule.MobArena.waves;
 import java.util.List;
 import java.util.Map;
 
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 import org.bukkit.Location;
 
 import com.garbagemule.MobArena.framework.Arena;
@@ -19,7 +20,7 @@ public interface Wave
      * @param arena an Arena
      * @return a collection of MACreatures and how many of each to spawn
      */
-    public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena);
+    public Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena);
     
     /**
      * Get a list of spawnpoints upon which the monsters of this

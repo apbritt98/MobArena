@@ -2,6 +2,7 @@ package com.garbagemule.MobArena.waves.types;
 
 import java.util.*;
 
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,8 +23,8 @@ public class UpgradeWave extends AbstractWave
     }
     
     @Override
-    public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
-        return new HashMap<MACreature,Integer>();
+    public Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
+        return new HashMap<ArenaCreature,Integer>();
     }
 
     public void grantItems(Arena arena, Player p, String className) {

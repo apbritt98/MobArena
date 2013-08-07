@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 import org.bukkit.inventory.ItemStack;
 
 import com.garbagemule.MobArena.Messenger;
@@ -24,7 +25,7 @@ public class BossWave extends AbstractWave
 {
     private String bossName;
     
-    private MACreature monster;
+    private ArenaCreature monster;
     private Set<MABoss> bosses;
     
     private boolean useHealthMultiplier;
@@ -38,7 +39,7 @@ public class BossWave extends AbstractWave
 
     private ItemStack reward;
     
-    public BossWave(MACreature monster) {
+    public BossWave(ArenaCreature monster) {
         this.monster   = monster;
         this.bosses    = new HashSet<MABoss>();
         this.abilities = new ArrayList<Ability>();
@@ -52,8 +53,8 @@ public class BossWave extends AbstractWave
     }
     
     @Override
-    public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
-        Map<MACreature,Integer> result = new HashMap<MACreature,Integer>();
+    public Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
+        Map<ArenaCreature,Integer> result = new HashMap<ArenaCreature,Integer>();
         result.put(monster, 1);
         return result;
     }

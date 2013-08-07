@@ -6,23 +6,24 @@ import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.waves.AbstractWave;
 import com.garbagemule.MobArena.waves.MACreature;
 import com.garbagemule.MobArena.waves.enums.*;
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 
 public class SwarmWave extends AbstractWave
 {
-    private MACreature monster;
+    private ArenaCreature monster;
     private SwarmAmount amount;
     
-    public SwarmWave(MACreature monster) {
+    public SwarmWave(ArenaCreature monster) {
         this.monster = monster;
         this.amount  = SwarmAmount.LOW;
         this.setType(WaveType.SWARM);
     }
     
     @Override
-    public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
+    public Map<ArenaCreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
         // Prepare the monster map.
-        Map<MACreature,Integer> result = new HashMap<MACreature,Integer>();
-        
+        Map<ArenaCreature,Integer> result = new HashMap<ArenaCreature,Integer>();
+
         // Add the monster and the swarm amount.
         int toSpawn = (int) Math.max(1D, amount.getAmount(playerCount) * super.getAmountMultiplier());
         result.put(monster, toSpawn);

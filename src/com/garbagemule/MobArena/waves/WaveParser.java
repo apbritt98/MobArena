@@ -3,7 +3,11 @@ package com.garbagemule.MobArena.waves;
 import java.util.*;
 
 import com.garbagemule.MobArena.ArenaClass;
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
+import com.garbagemule.MobArena.waves.mob.BasicCreature;
+import com.garbagemule.MobArena.waves.mob.SkeletonCreature;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import com.garbagemule.MobArena.Messenger;
@@ -145,7 +149,7 @@ public class WaveParser
     
     private static Wave parseDefaultWave(Arena arena, String name, ConfigSection config) {
         // Grab the monster map.
-        SortedMap<Integer,MACreature> monsters = getMonsterMap(config);
+        SortedMap<Integer,ArenaCreature> monsters = getMonsterMap(config);
         if (monsters == null || monsters.isEmpty()) {
             Messenger.warning(WaveError.MONSTER_MAP_MISSING.format(name, arena.configName()));
             return null;
@@ -170,7 +174,7 @@ public class WaveParser
     }
     
     private static Wave parseSpecialWave(Arena arena, String name, ConfigSection config) {
-        SortedMap<Integer,MACreature> monsters = getMonsterMap(config);
+        SortedMap<Integer,ArenaCreature> monsters = getMonsterMap(config);
         if (monsters == null || monsters.isEmpty()) {
             Messenger.warning(WaveError.MONSTER_MAP_MISSING.format(name, arena.configName()));
             return null;
@@ -181,7 +185,7 @@ public class WaveParser
     }
     
     private static Wave parseSwarmWave(Arena arena, String name, ConfigSection config) {
-        MACreature monster = getSingleMonster(config);
+        ArenaCreature monster = getSingleMonster(config);
         if (monster == null) {
             Messenger.warning(WaveError.SINGLE_MONSTER_MISSING.format(name, arena.configName()));
             return null;
@@ -198,7 +202,7 @@ public class WaveParser
     }
     
     private static Wave parseSupplyWave(Arena arena, String name, ConfigSection config) {
-        SortedMap<Integer,MACreature> monsters = getMonsterMap(config);
+        SortedMap<Integer,ArenaCreature> monsters = getMonsterMap(config);
         if (monsters == null || monsters.isEmpty()) {
             Messenger.warning(WaveError.MONSTER_MAP_MISSING.format(name, arena.configName()));
             return null;
@@ -231,7 +235,7 @@ public class WaveParser
     }
     
     private static Wave parseBossWave(Arena arena, String name, ConfigSection config) {
-        MACreature monster = getSingleMonster(config);
+        ArenaCreature monster = getSingleMonster(config);
         if (monster == null) {
             Messenger.warning(WaveError.SINGLE_MONSTER_MISSING.format(name, arena.configName()));
             return null;
@@ -301,13 +305,13 @@ public class WaveParser
      * @param config a ConfigSection
      * @return an MACreature, if the monster node contains one that is valid
      */
-    private static MACreature getSingleMonster(ConfigSection config) {
+    private static ArenaCreature getSingleMonster(ConfigSection config) {
         String monster = config.getString("monster");
         if (monster == null) {
             return null;
         }
         
-        MACreature result = MACreature.fromString(monster);
+        ArenaCreature result = MACreature.creatureFromString(monster);
         return result;
     }
     
@@ -317,20 +321,20 @@ public class WaveParser
      * @param config
      * @return a "reverse" map of monsters and numbers
      */
-    private static SortedMap<Integer,MACreature> getMonsterMap(ConfigSection config) {
+    private static SortedMap<Integer,ArenaCreature> getMonsterMap(ConfigSection config) {
         Set<String> monsters = config.getKeys("monsters");
         if (monsters == null || monsters.isEmpty()) {
             return null;
         }
         
         // Prepare the map.
-        SortedMap<Integer,MACreature> monsterMap = new TreeMap<Integer,MACreature>();
+        SortedMap<Integer,ArenaCreature> monsterMap = new TreeMap<Integer,ArenaCreature>();
         int sum = 0;
         String path = "monsters.";
         
         // Check all the monsters.
         for (String monster : monsters) {
-            MACreature creature = MACreature.fromString(monster);
+            ArenaCreature creature = MACreature.creatureFromString(monster);
             if (creature == null) continue;
             
             int prob = config.getInt(path + monster, 0);
@@ -426,11 +430,11 @@ public class WaveParser
     }
     
     public static Wave createDefaultWave() {
-        SortedMap<Integer,MACreature> monsters = new TreeMap<Integer,MACreature>();
-        monsters.put(10, MACreature.ZOMBIE);
-        monsters.put(20, MACreature.SKELETON);
-        monsters.put(30, MACreature.SPIDER);
-        monsters.put(40, MACreature.SLIMESMALL);
+        SortedMap<Integer,ArenaCreature> monsters = new TreeMap<Integer,ArenaCreature>();
+        monsters.put(10, new BasicCreature(EntityType.ZOMBIE));
+        monsters.put(20, new SkeletonCreature());
+        monsters.put(30, new BasicCreature(EntityType.SPIDER));
+        monsters.put(40, new BasicCreature(EntityType.CREEPER));
         
         DefaultWave result = new DefaultWave(monsters);
         result.setName("MA_DEFAULT_WAVE");

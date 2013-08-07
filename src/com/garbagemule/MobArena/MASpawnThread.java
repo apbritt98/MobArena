@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.garbagemule.MobArena.events.ArenaCompleteEvent;
+import com.garbagemule.MobArena.waves.mob.ArenaCreature;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -148,7 +149,7 @@ public class MASpawnThread implements Runnable
             return;
         }
 
-        Map<MACreature, Integer> monsters = w.getMonstersToSpawn(wave, playerCount, arena);
+        Map<ArenaCreature, Integer> monsters = w.getMonstersToSpawn(wave, playerCount, arena);
         List<Location> spawnpoints = w.getSpawnpoints(arena);
 
         World world = arena.getWorld();
@@ -156,7 +157,7 @@ public class MASpawnThread implements Runnable
         int index = 0;
         double mul = w.getHealthMultiplier();
 
-        for (Map.Entry<MACreature, Integer> entry : monsters.entrySet()) {
+        for (Map.Entry<ArenaCreature, Integer> entry : monsters.entrySet()) {
             for (int i = 0; i < entry.getValue(); i++, index++) {
                 // Check if monster limit has been reached.
                 if (monsterManager.getMonsters().size() >= monsterLimit) {
